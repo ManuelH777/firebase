@@ -1,6 +1,7 @@
 /**
  * @TODO get a reference to the Firebase Database object
  */
+    const database = firebase.database().ref();
 
 /**
  * @TODO get const references to the following elements:
@@ -10,6 +11,16 @@
  *      - button with id #send-btn and the updateDB
  *        function as an onclick event handler
  */
+
+
+
+  const allMessages = document.getElementById('all-messages');
+  const usernameElem = document.getElementById('username');
+  const messageElem = document.getElementById('message');
+  const sendBtn = document.getElementById('send-btn');
+  sendBtn.onclick = updateDB;
+
+
 
 /**
  * @TODO create a function called updateDB which takes
@@ -24,18 +35,31 @@
 
 function updateDB(event) {
   // Prevent default refresh
+  event.preventDefault();
   // Create data object
+  const data = {
+    USERNAME: usernameElem.value, MESSAGE: messageElem.value,
+  };
   // console.log the object
+  console.log(data);
   // GET *PUSH* PUT DELETE
   // Write to our database
+  database.push(data);
   // Reset message
+  messageElem.value = '';
 }
+
+database.on('event_type', callback);
 
 /**
  * @TODO add the addMessageToBoard function as an event
  * handler for the "child_added" event on the database
  * object
  */
+
+database.on('child_added', addMessageToBoard);
+
+
 
 /**
  * @TODO create a function called addMessageToBoard that
@@ -50,10 +74,14 @@ function updateDB(event) {
 
 function addMessageToBoard(rowData) {
   // Store the value of rowData inside object named 'data'
+  const data = rowdata.val();
   // console.log data
+  console.log(data);
   // Create a variable named singleMessage
+  let singleMessage = makeSingleMessageHTML(data.USERNAME, data.MESSAGE);
   // that stores function call for makeSingleMessageHTML()
   // Append the new message HTML element to allMessages
+  allMessages.append(singleMessage);
 }
 
 /**
@@ -76,11 +104,21 @@ function addMessageToBoard(rowData) {
 
 function makeSingleMessageHTML(usernameTxt, messageTxt) {
   // Create Parent Div
+  let parentDiv = document.createElement('div');
   // Add Class name .single-message
+  parentDiv.className = 'single-message';
   // Create Username P Tag
+  let usernameP = document.createElement('p');
+  usernameP.className = 'single-message-username';
+  usernameP.innerHTML = usernameTxt + ':';
   // Append username
+  parentDiv.append(usernameP);
   // Create message P Tag
+  let messageP = document.createElement('p');
+  messageP.innerHTML = messageTxt;
+  parentDiv.append(messageP);
   // Return Parent Div
+  return parentDiv;
 }
 
 /**
